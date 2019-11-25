@@ -78,7 +78,7 @@ if max_depth > 1:
 		#updates symbols already covered
 		covered_symbols.extend(symbols)
 
-if branches > 1:
+#if branches > 1:
 
 
 with open('output.json', 'w') as outfile:
