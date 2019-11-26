@@ -1,45 +1,51 @@
 """By Radek, modified by Magnus
 25-11-2019
-I use Pandas for dealing with the dataset beacuse I am more fluent in Pandas than the more native
-native way of dealing with .csv files. The public script can probably revert back to this for the reading
-of the dataset and the get_intersected() function. What I have worked on is to make the depth processing
-part of the script work.
-One "notable tweak I did was to include the root symbol AND the correlated symbol in each dict entry,
-so pairing them together in a graph would be easier. If it's possible to do it without this....
-well...more data is usually always better.
-
-I noticed a peculiarity when I had an issue with getting the script to display the correct depth level
-for the initial symbols found to have correlation: even if the standard 
-I will also try to make it so that a user can limit the branches, where only the top n branches(n being
-the number branches desired to be displayed) are displayed.
-My plan is to use the depth keys to iterate through each dict entry depending on the depth
-and then remove the entries within a specific depth that doesn't fall within the top n scores.
+This script is a modified version of Radek's featuring a slightly faster depth-algorithm(if you can
+call this an algorithm), user-specified amount of branches per node and user specified amount of nodes.
+In addition, I have implemented a measure to clean the graph of mirrored duplicates that occur in 
+correlation matrices.
 
 I really hope you can all understand my retarded way of explaining. If not, hit me up on Telegram for this
 or simply run the script.
-In addition, the last thing Kasian wanted for this script would be to limit the amount of nodes.
-I think this will be easy to implement. Just sort all the dict entries by score, then keep those that are
-in the top n(n here again being the max number of nodes desired to be displayed)
-Of course I could be wrong on all of this, and you guys know of a better way to do it. 
+
+TODO: 
+-probably make the script load default argument values if no arguments are passed
+-make it so that max_depth=1 gives deepest possible depth
+-turn all the processing blocks into functions instead so it looks cleaner and neater
+
 """
 import sys
 import csv
 import json
+import pprint
+import collections
+from operator import itemgetter 
+
 
 SCORE = 0.01
 
-if len(sys.argv) != 5:
+if len(sys.argv) != 6:
 	print('*****')
-	print('Usage: print script.py <symbol> <depth> <branches> <file_name>')
-	print('Example: python script.py abc 3 test.csv')
+	print('Usage: print script.py <symbol> <depth> <branches> <nodes> <file_name>')
+	print('Example: python script2.py BTC 3 2 5 dataset.csv')
+	print('Note: passing the argument for branches and nodes as 1 gives the max possible amount of nodes and branches')
 	print('*****')
 	exit()
 
+######Please suggest me some proper
+"""if sys.argv[2]>10 or sys.argv[3]>5 or sys.argv[4]>50:
+	print('*****')
+	print('Arguments out of range')
+	print('depth<10, branches<5, nodes<50')"""
+
+#assign argument values to variables
 root_symbol = sys.argv[1]
 max_depth = int(sys.argv[2])
 branches = int(sys.argv[3])
-file_name = sys.argv[4]
+nodes = int(sys.argv[4])
+file_name = sys.argv[5]
 
+#Read the dataset
 headers = []
 data = {}
 with open(file_name) as file:
@@ -48,10 +54,13 @@ with open(file_name) as file:
 	for row in csv_reader:
 		data[row[0]] = [float(x) for x in row[1:]]
 
+
+#this function gets all the correlated symbols of the root symbol
 def get_intersected(symbol, dict, depth=1):
-	return [{'root_symbol':symbol, 'cor_symbol':headers[i], 'score':score, 'depth':depth} for i, score in enumerate(dict[symbol]) if score > SCORE]
+	return [{'root_symbol':symbol, 'cor_symbol':headers[i], 'score':score, 'depth':depth} for i, score in enumerate(dict[symbol]) if score > SCORE and headers[i]!=symbol]
 
 result = get_intersected(root_symbol, data)
+
 
 if max_depth > 1:
 	#initialize 2 lists containing symbols
@@ -73,12 +82,48 @@ if max_depth > 1:
 		#updates symbols already covered
 		covered_symbols.extend(symbols)
 
-if branches > 1:
-	for i in range(1, max_depth+1):
-		print(i)
+#removes duplicates because a correlation matrix is mirrored right? Please contribute if there's a better way of doing this
+duplicates=[]
+for i in range(len(result)):
+	for j in range(len(result)):
+		#long if condition lmao
+		if ((result[i]['root_symbol']==result[j]['cor_symbol'] and result[i]['cor_symbol']==result[j]['root_symbol'] or 
+			result[i]['root_symbol']==result[j]['root_symbol'] and result[i]['cor_symbol']==result[j]['cor_symbol'] and 
+			result[i]['depth']!=result[j]['depth']) and result[i] not in duplicates):
+			duplicates.append(result[j])
+result= [x for x in result if x not in duplicates]
 
-with open('output.json', 'w') as outfile:
+#limits the amount of branches per depth. May need to work more on this one
+if branches > 1:
+	temp=[]
+	temp2=[]
+	symbol="null"
+	result=sorted(result, key=itemgetter('score'), reverse=True)
+	result=sorted(result, key=itemgetter('root_symbol', 'depth')) 
+	for i in range(len(result)):
+		if symbol!=result[i]['root_symbol']:
+			symbol=result[i]['root_symbol']
+			temp.clear()
+			for item in result:
+				if item['root_symbol'] == symbol:
+					temp.append(item)
+			temp=temp[:branches]
+			temp2.extend(temp)
+	result=temp2.copy()
+
+
+
+#limits amount of nodes by only displaying the top n nodes, prioritizing lower levels of depth
+if nodes > 1:
+	temp=[]
+	temp=sorted(result, key=itemgetter('score'), reverse=True)
+	temp=sorted(temp, key=itemgetter('depth'))[:nodes]
+
+	result.clear()
+	result=temp.copy()
+
+
+with open('output_script2.json', 'w') as outfile:
 	json.dump(result, outfile)
 
-import pprint
 pprint.pprint(result)
