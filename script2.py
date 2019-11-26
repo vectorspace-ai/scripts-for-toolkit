@@ -65,11 +65,13 @@ def Main():
 	result = get_intersected(root_symbol, data)
 	result = set_depth(result, max_depth)
 	result = remove_duplicates(result)
-	result = set_branches(result, branches)
-	result = set_nodes(result, nodes)
+	if branches>0:
+		result = set_branches(result, branches)
+	if nodes>0:
+		result = set_nodes(result, nodes)
 
 	with open('output_script2.json', 'w') as outfile:
-		json.dump(result, outfile)
+		json.dump(result, outfile, indent=2)
 
 	pprint.pprint(result)
 	end=time.time()
