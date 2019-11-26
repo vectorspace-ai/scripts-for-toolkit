@@ -10,8 +10,6 @@ or simply run the script.
 
 TODO: 
 -probably make the script load default argument values if no arguments are passed
--make it so that max_depth=1 gives deepest possible depth
--turn all the processing blocks into functions instead so it looks cleaner and neater
 
 """
 import sys
@@ -19,11 +17,12 @@ import csv
 import json
 import pprint
 import collections
+import time
 from operator import itemgetter 
 
+start=time.time()
 
 SCORE = 0.01
-
 if len(sys.argv) != 6:
 	print('*****')
 	print('Usage: print script.py <symbol> <depth> <branches> <nodes> <file_name>')
@@ -31,8 +30,7 @@ if len(sys.argv) != 6:
 	print('Note: passing the argument for branches and nodes as 1 gives the max possible amount of nodes and branches')
 	print('*****')
 	exit()
-
-######Please suggest me some proper
+######Please suggest me some proper limits
 """if sys.argv[2]>10 or sys.argv[3]>5 or sys.argv[4]>50:
 	print('*****')
 	print('Arguments out of range')
@@ -45,24 +43,46 @@ branches = int(sys.argv[3])
 nodes = int(sys.argv[4])
 file_name = sys.argv[5]
 
+
 #Read the dataset
 headers = []
 data = {}
+delim= "null"
+if file_name[:4]=='.csv':
+	delim=','
+else:
+	delim='\t'
 with open(file_name) as file:
-	csv_reader = csv.reader(file, delimiter=',')
+	csv_reader = csv.reader(file, delimiter=delim)
 	headers = next(csv_reader)[1:]
 	for row in csv_reader:
 		data[row[0]] = [float(x) for x in row[1:]]
 
+def Main():
+
+
+
+	result = get_intersected(root_symbol, data)
+	result = set_depth(result, max_depth)
+	result = remove_duplicates(result)
+	result = set_branches(result, branches)
+	result = set_nodes(result, nodes)
+
+	with open('output_script2.json', 'w') as outfile:
+		json.dump(result, outfile)
+
+	pprint.pprint(result)
+	end=time.time()
+	print("Elapsed time: ", end-start)
+
+"""------------------------------------------------------------------------------------------------"""
 
 #this function gets all the correlated symbols of the root symbol
 def get_intersected(symbol, dict, depth=1):
-	return [{'root_symbol':symbol, 'cor_symbol':headers[i], 'score':score, 'depth':depth} for i, score in enumerate(dict[symbol]) if score > SCORE and headers[i]!=symbol]
-
-result = get_intersected(root_symbol, data)
+	return [{'root_symbol':symbol, 'cor_symbol':headers[i].strip(), 'score':score, 'depth':depth} for i, score in enumerate(dict[symbol]) if score > SCORE and headers[i].strip()!=symbol]
 
 
-if max_depth > 1:
+def set_depth(result, max_depth):
 	#initialize 2 lists containing symbols
 	symbols=[]
 	covered_symbols=[]
@@ -82,19 +102,22 @@ if max_depth > 1:
 		#updates symbols already covered
 		covered_symbols.extend(symbols)
 
-#removes duplicates because a correlation matrix is mirrored right? Please contribute if there's a better way of doing this
-duplicates=[]
-for i in range(len(result)):
-	for j in range(len(result)):
-		#long if condition lmao
-		if ((result[i]['root_symbol']==result[j]['cor_symbol'] and result[i]['cor_symbol']==result[j]['root_symbol'] or 
-			result[i]['root_symbol']==result[j]['root_symbol'] and result[i]['cor_symbol']==result[j]['cor_symbol'] and 
-			result[i]['depth']!=result[j]['depth']) and result[i] not in duplicates):
-			duplicates.append(result[j])
-result= [x for x in result if x not in duplicates]
+	return result
 
+#removes duplicates because a correlation matrix is mirrored right? Please contribute if there's a better way of doing this
+def remove_duplicates(result):
+	duplicates=[]
+	for i in range(len(result)):
+		for j in range(len(result)):
+			#long if condition lmao
+			if ((result[i]['root_symbol']==result[j]['cor_symbol'] and result[i]['cor_symbol']==result[j]['root_symbol'] or 
+				result[i]['root_symbol']==result[j]['root_symbol'] and result[i]['cor_symbol']==result[j]['cor_symbol'] and 
+				result[i]['depth']!=result[j]['depth']) and result[i] not in duplicates):
+				duplicates.append(result[j])
+
+	return [x for x in result if x not in duplicates]
 #limits the amount of branches per depth. May need to work more on this one
-if branches > 1:
+def set_branches(result, branches):
 	temp=[]
 	temp2=[]
 	symbol="null"
@@ -109,21 +132,15 @@ if branches > 1:
 					temp.append(item)
 			temp=temp[:branches]
 			temp2.extend(temp)
-	result=temp2.copy()
 
+	return temp2
 
 
 #limits amount of nodes by only displaying the top n nodes, prioritizing lower levels of depth
-if nodes > 1:
+def set_nodes(result, nodes):
 	temp=[]
 	temp=sorted(result, key=itemgetter('score'), reverse=True)
-	temp=sorted(temp, key=itemgetter('depth'))[:nodes]
+	return=sorted(temp, key=itemgetter('depth'))[:nodes]
 
-	result.clear()
-	result=temp.copy()
-
-
-with open('output_script2.json', 'w') as outfile:
-	json.dump(result, outfile)
-
-pprint.pprint(result)
+if __name__ == '__main__':
+	Main()
