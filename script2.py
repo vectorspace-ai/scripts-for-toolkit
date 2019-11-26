@@ -140,7 +140,7 @@ def set_branches(result, branches):
 def set_nodes(result, nodes):
 	temp=[]
 	temp=sorted(result, key=itemgetter('score'), reverse=True)
-	return=sorted(temp, key=itemgetter('depth'))[:nodes]
+	return sorted(temp, key=itemgetter('depth'))[:nodes]
 
 if __name__ == '__main__':
 	Main()
