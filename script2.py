@@ -145,7 +145,7 @@ def set_branches(result, branches):
 	for i in range(len(result)):
 		if symbol!=result[i]['root_symbol']:
 			symbol=result[i]['root_symbol']
-			temp.clear()
+			temp[:]=[]
 			for item in result:
 				if item['root_symbol'] == symbol:
 					temp.append(item)
