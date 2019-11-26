@@ -16,9 +16,8 @@ import sys
 import csv
 import json
 import pprint
-import collections
 import time
-from operator import itemgetter 
+import operator
 
 start=time.time()
 
@@ -28,6 +27,7 @@ if len(sys.argv) != 6:
 	print('Usage: print script.py <symbol> <depth> <branches> <nodes> <file_name>')
 	print('Example: python script2.py BTC 3 2 5 dataset.csv')
 	print('Note: passing the argument for branches and nodes as 1 gives the max possible amount of nodes and branches')
+	print('Passing all numerical arguments as 0 makes the script behave the same as script1.py')
 	print('*****')
 	exit()
 ######Please suggest me some proper limits
@@ -67,8 +67,14 @@ def Main():
 	result = remove_duplicates(result)
 	if branches>0:
 		result = set_branches(result, branches)
+	else:
+		result=sorted(result, key=operator.itemgetter('depth')) 
+
 	if nodes>0:
 		result = set_nodes(result, nodes)
+	else:
+		result=sorted(result, key=operator.itemgetter('depth')) 
+
 
 	with open('output_script2.json', 'w') as outfile:
 		json.dump(result, outfile, indent=2)
@@ -123,8 +129,8 @@ def set_branches(result, branches):
 	temp=[]
 	temp2=[]
 	symbol="null"
-	result=sorted(result, key=itemgetter('score'), reverse=True)
-	result=sorted(result, key=itemgetter('root_symbol', 'depth')) 
+	result=sorted(result, key=operator.itemgetter('score'), reverse=True)
+	result=sorted(result, key=operator.itemgetter('root_symbol', 'depth')) 
 	for i in range(len(result)):
 		if symbol!=result[i]['root_symbol']:
 			symbol=result[i]['root_symbol']
@@ -141,8 +147,8 @@ def set_branches(result, branches):
 #limits amount of nodes by only displaying the top n nodes, prioritizing lower levels of depth
 def set_nodes(result, nodes):
 	temp=[]
-	temp=sorted(result, key=itemgetter('score'), reverse=True)
-	return sorted(temp, key=itemgetter('depth'))[:nodes]
+	temp=sorted(result, key=operator.itemgetter('score'), reverse=True)
+	return sorted(temp, key=operator.itemgetter('depth'))[:nodes]
 
 if __name__ == '__main__':
 	Main()

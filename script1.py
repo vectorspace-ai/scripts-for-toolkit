@@ -8,6 +8,13 @@ it's just for the first level of depth,to create a cluster single-level graph.
 import sys
 import csv
 import json
+import time
+import pprint
+import operator
+
+
+start=time.time()
+
 
 SCORE = 0.01
 
@@ -23,20 +30,32 @@ file_name = sys.argv[2]
 
 headers = []
 data = {}
+delim= "null"
+if file_name[:4]=='.csv':
+	delim=','
+else:
+	delim='\t'
 with open(file_name) as file:
-	csv_reader = csv.reader(file, delimiter=',')
+	csv_reader = csv.reader(file, delimiter=delim)
 	headers = next(csv_reader)[1:]
 	for row in csv_reader:
 		data[row[0]] = [float(x) for x in row[1:]]
 
-def get_intersected(symbol, dict, depth=1):
-	return [{'root_symbol':symbol, 'cor_symbol':headers[i], 'score':score, 'depth':depth} for i, score in enumerate(dict[symbol]) if score > SCORE and headers[i]!=symbol]
+def Main():
+	result=sorted(get_intersected(root_symbol, data), key=operator.itemgetter('score'), reverse=True)
 
-result = get_intersected(root_symbol, data)
+	with open('output_script1.json', 'w') as outfile:
+		json.dump(result, outfile, indent=2)
+
+	pprint.pprint(result)
+	end=time.time()
+	print("Elapsed time: ", end-start)
 
 	
-with open('output_script1.json', 'w') as outfile:
-	json.dump(result, outfile)
 
-import pprint
-pprint.pprint(result)
+def get_intersected(symbol, dict, depth=1):
+	return [{'root_symbol':symbol, 'cor_symbol':headers[i].strip(), 'score':score, 'depth':depth} for i, score in enumerate(dict[symbol]) if score > SCORE and headers[i].strip()!=symbol]
+
+
+if __name__ == '__main__':
+	Main()
