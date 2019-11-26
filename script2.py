@@ -48,10 +48,16 @@ file_name = sys.argv[5]
 headers = []
 data = {}
 delim= "null"
-if file_name[:4]=='.csv':
+if file_name[-4:]=='.csv':
 	delim=','
-else:
+elif file_name[-4:]=='.tsv':
 	delim='\t'
+else:
+	print('*****')
+	print('ERROR: Passed dataset is not a supported file. Use Comma-Seprated Values(.csv) or Tab-Seperated Values(.tsv) files')
+	print('*****')
+	exit()
+
 with open(file_name) as file:
 	csv_reader = csv.reader(file, delimiter=delim)
 	headers = next(csv_reader)[1:]
@@ -62,19 +68,24 @@ def Main():
 
 
 
-	result = get_intersected(root_symbol, data)
+	try:
+		result=sorted(get_intersected(root_symbol, data), key=operator.itemgetter('score'), reverse=True)
+
+	except:
+		"""-------------Windows 10----------------"""
+		"""Something Happened"""
+		#Something Happened
+		print('*****')
+		print("ERROR: Dataset is of an invalid format or the symbol was not found")
+		print('*****')
+		exit()
+
 	result = set_depth(result, max_depth)
 	result = remove_duplicates(result)
 	if branches>0:
 		result = set_branches(result, branches)
-	else:
-		result=sorted(result, key=operator.itemgetter('depth')) 
-
 	if nodes>0:
 		result = set_nodes(result, nodes)
-	else:
-		result=sorted(result, key=operator.itemgetter('depth')) 
-
 
 	with open('output_script2.json', 'w') as outfile:
 		json.dump(result, outfile, indent=2)

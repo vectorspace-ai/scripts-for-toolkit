@@ -1,5 +1,7 @@
 # scripts-for-toolkit
 :)<br/>
+The scripts automatically detect if the file is .csv or .tsv(aslong as the file has the extension) and uses the appropiorate delimiter<br/>
+
 FOR SCRIPT1.PY<br/>
 Usage: python script.py <symbol> <file_name><br/>
 Example: python script1.py BTC dataset.csv<br/>

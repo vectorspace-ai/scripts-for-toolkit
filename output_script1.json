@@ -1,0 +1,170 @@
+[
+  {
+    "root_symbol": "CALA",
+    "cor_symbol": "LOXO",
+    "score": 0.49224583572659386,
+    "depth": 1
+  },
+  {
+    "root_symbol": "CALA",
+    "cor_symbol": "TKAI",
+    "score": 0.38240396530359355,
+    "depth": 1
+  },
+  {
+    "root_symbol": "CALA",
+    "cor_symbol": "UTHR",
+    "score": 0.3455730954015099,
+    "depth": 1
+  },
+  {
+    "root_symbol": "CALA",
+    "cor_symbol": "AGIO",
+    "score": 0.2994567488508149,
+    "depth": 1
+  },
+  {
+    "root_symbol": "CALA",
+    "cor_symbol": "PGNX",
+    "score": 0.2915268456375839,
+    "depth": 1
+  },
+  {
+    "root_symbol": "CALA",
+    "cor_symbol": "AVEO",
+    "score": 0.2473785576717312,
+    "depth": 1
+  },
+  {
+    "root_symbol": "CALA",
+    "cor_symbol": "BLPH",
+    "score": 0.24413931681178833,
+    "depth": 1
+  },
+  {
+    "root_symbol": "CALA",
+    "cor_symbol": "CORT",
+    "score": 0.223069590085796,
+    "depth": 1
+  },
+  {
+    "root_symbol": "CALA",
+    "cor_symbol": "ALNY",
+    "score": 0.1801047120418848,
+    "depth": 1
+  },
+  {
+    "root_symbol": "CALA",
+    "cor_symbol": "BGNE",
+    "score": 0.16928189034520955,
+    "depth": 1
+  },
+  {
+    "root_symbol": "CALA",
+    "cor_symbol": "GERN",
+    "score": 0.16373098478783024,
+    "depth": 1
+  },
+  {
+    "root_symbol": "CALA",
+    "cor_symbol": "ZTS",
+    "score": 0.16005086245024325,
+    "depth": 1
+  },
+  {
+    "root_symbol": "CALA",
+    "cor_symbol": "JAGX",
+    "score": 0.1599500156201187,
+    "depth": 1
+  },
+  {
+    "root_symbol": "CALA",
+    "cor_symbol": "FOLD",
+    "score": 0.1537573039815192,
+    "depth": 1
+  },
+  {
+    "root_symbol": "CALA",
+    "cor_symbol": "SRPT",
+    "score": 0.14152135456153653,
+    "depth": 1
+  },
+  {
+    "root_symbol": "CALA",
+    "cor_symbol": "KIN",
+    "score": 0.13065812226630047,
+    "depth": 1
+  },
+  {
+    "root_symbol": "CALA",
+    "cor_symbol": "PRGO",
+    "score": 0.1074033552151714,
+    "depth": 1
+  },
+  {
+    "root_symbol": "CALA",
+    "cor_symbol": "PTLA",
+    "score": 0.10644945324704307,
+    "depth": 1
+  },
+  {
+    "root_symbol": "CALA",
+    "cor_symbol": "GNVC",
+    "score": 0.1062516769519721,
+    "depth": 1
+  },
+  {
+    "root_symbol": "CALA",
+    "cor_symbol": "MYOK",
+    "score": 0.09891413450132312,
+    "depth": 1
+  },
+  {
+    "root_symbol": "CALA",
+    "cor_symbol": "RARE",
+    "score": 0.09221767115272089,
+    "depth": 1
+  },
+  {
+    "root_symbol": "CALA",
+    "cor_symbol": "MACK",
+    "score": 0.09115114630519727,
+    "depth": 1
+  },
+  {
+    "root_symbol": "CALA",
+    "cor_symbol": "ECYT",
+    "score": 0.09070965767052702,
+    "depth": 1
+  },
+  {
+    "root_symbol": "CALA",
+    "cor_symbol": "NVET",
+    "score": 0.0839501363459291,
+    "depth": 1
+  },
+  {
+    "root_symbol": "CALA",
+    "cor_symbol": "DRNA",
+    "score": 0.07184413475849005,
+    "depth": 1
+  },
+  {
+    "root_symbol": "CALA",
+    "cor_symbol": "SHPG",
+    "score": 0.04656115386476937,
+    "depth": 1
+  },
+  {
+    "root_symbol": "CALA",
+    "cor_symbol": "CRBP",
+    "score": 0.02395285738511107,
+    "depth": 1
+  },
+  {
+    "root_symbol": "CALA",
+    "cor_symbol": "PRTA",
+    "score": 0.021795869774257064,
+    "depth": 1
+  }
+]
