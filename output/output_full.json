@@ -1,0 +1,92 @@
+[
+  {
+    "root_symbol": "CELG",
+    "cor_symbol": "KERX",
+    "score": 0.3713599519663765,
+    "depth": 1
+  },
+  {
+    "root_symbol": "CELG",
+    "cor_symbol": "SPHS",
+    "score": 0.328928046989721,
+    "depth": 1
+  },
+  {
+    "root_symbol": "CELG",
+    "cor_symbol": "JNJ",
+    "score": 0.21170130869899922,
+    "depth": 1
+  },
+  {
+    "root_symbol": "CELG",
+    "cor_symbol": "KERX",
+    "score": 0.3713599519663765,
+    "depth": 2
+  },
+  {
+    "root_symbol": "CELG",
+    "cor_symbol": "SPHS",
+    "score": 0.328928046989721,
+    "depth": 2
+  },
+  {
+    "root_symbol": "CELG",
+    "cor_symbol": "HZNP",
+    "score": 0.1854042823339297,
+    "depth": 2
+  },
+  {
+    "root_symbol": "JNJ",
+    "cor_symbol": "LLY",
+    "score": 0.8551756885090218,
+    "depth": 2
+  },
+  {
+    "root_symbol": "JNJ",
+    "cor_symbol": "CELG",
+    "score": 0.6443094273687555,
+    "depth": 2
+  },
+  {
+    "root_symbol": "JNJ",
+    "cor_symbol": "MRK",
+    "score": 0.5734952551595991,
+    "depth": 2
+  },
+  {
+    "root_symbol": "KERX",
+    "cor_symbol": "SPHS",
+    "score": 0.856093979441997,
+    "depth": 2
+  },
+  {
+    "root_symbol": "KERX",
+    "cor_symbol": "EGRX",
+    "score": 0.4112999760593728,
+    "depth": 2
+  },
+  {
+    "root_symbol": "KERX",
+    "cor_symbol": "HTBX",
+    "score": 0.3613595706618962,
+    "depth": 2
+  },
+  {
+    "root_symbol": "SPHS",
+    "cor_symbol": "EGRX",
+    "score": 0.45894182427579605,
+    "depth": 2
+  },
+  {
+    "root_symbol": "SPHS",
+    "cor_symbol": "VNDA",
+    "score": 0.17839433293978746,
+    "depth": 2
+  },
+  {
+    "root_symbol": "SPHS",
+    "cor_symbol": "ADRO",
+    "score": 0.1504226499643548,
+    "depth": 2
+  }
+]

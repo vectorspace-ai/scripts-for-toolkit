@@ -69,8 +69,6 @@ with open(file_name) as file:
 
 def Main():
 
-
-
 	try:
 		result=sorted(get_intersected(root_symbol, data), key=operator.itemgetter('score'), reverse=True)
 
@@ -83,37 +81,53 @@ def Main():
 		print('*****')
 		exit()
 
-	result = set_depth(result, max_depth)
-	result = remove_duplicates(result)
+	result=remove_duplicates(result)
 	if branches>0:
-		result = set_branches(result, branches)
+		result=result[:branches]
+	result = set_depth(result, root_symbol, max_depth, branches)
 	if nodes>0:
 		result = set_nodes(result, nodes)
 
-	array=list(map(operator.itemgetter('root_symbol', 'cor_symbol'), result)) 
+	result=sorted(sorted(result, key=operator.itemgetter('score'), 
+		reverse=True), key=operator.itemgetter('depth', 'root_symbol')) 
 
-	save_results(array, "output/output.json")
-	save_results(result, "output/output_full.json")
+	array=list(map(operator.itemgetter('root_symbol', 'cor_symbol'), result)) 
 
 
 	pprint.pprint(result)
+	print("Nodes: ", len(result))
+	print("Max Depth: ", max_depth)
+	print("Max Branches: ", branches)
+
+	save_results(array, "output/output.json")
+	save_results(result, "output/output_full.json")
 	end=time.time()
 	print("Elapsed time: ", end-start)
+
+
+
+
+
+
 
 """------------------------------------------------------------------------------------------------"""
 
 #this function gets all the correlated symbols of the root symbol
 def get_intersected(symbol, dict, depth=1):
-	return [{'root_symbol':symbol, 'cor_symbol':headers[i].strip(), 'score':score, 'depth':depth} for i, score in enumerate(dict[symbol]) if score > min_score and headers[i].strip()!=symbol]
+	return [{'root_symbol':symbol, 'cor_symbol':headers[i].strip(), 'score':score, 'depth':depth} for i, 
+	score in enumerate(dict[symbol]) if score > min_score and headers[i].strip()!=symbol]
 
 
-def set_depth(result, max_depth):
+def set_depth(result, root_symbol, max_depth, branches):
 	#initialize 2 lists containing symbols
 	symbols=[]
 	covered_symbols=[]
+	temp=[]
+	symbols.append(root_symbol)
 	#this is used for the while loop(subtracted by 1 because first level has already been covered above)
 	remainer_depth=max_depth-1
 	while remainer_depth>0:
+		temp[:]=[]
 		#removes all symbols previously covered
 		symbols=[x for x in symbols if x not in covered_symbols]
 		for j in range(len(result)):
@@ -122,10 +136,22 @@ def set_depth(result, max_depth):
 				symbols.append(result[j]['cor_symbol'])
 		for name in symbols:
 			#performs the same function as with the root symbol
-			result[(len(result)):]=(get_intersected(name, data, max_depth-remainer_depth+1))
+			temp[(len(temp)):]=get_intersected(name, data, max_depth-remainer_depth+1)
+
 		remainer_depth-=1
 		#updates symbols already covered
+
+		temp=sorted(sorted(temp, key=operator.itemgetter('score'), reverse=True), 
+			key=operator.itemgetter('depth'))
+
 		covered_symbols.extend(symbols)
+		temp=remove_duplicates(temp)
+		if branches>0:
+			temp=set_branches(temp, branches)
+
+
+		result.extend(temp)
+
 
 	return result
 
@@ -135,9 +161,9 @@ def remove_duplicates(result):
 	for i in range(len(result)):
 		for j in range(len(result)):
 			#long if condition lmao
-			if ((result[i]['root_symbol']==result[j]['cor_symbol'] and result[i]['cor_symbol']==result[j]['root_symbol'] or 
-				result[i]['root_symbol']==result[j]['root_symbol'] and result[i]['cor_symbol']==result[j]['cor_symbol'] and 
-				result[i]['depth']!=result[j]['depth']) and result[i] not in duplicates):
+			if (((result[i]['root_symbol']==result[j]['cor_symbol'] and result[i]['cor_symbol']==result[j]['root_symbol']) or 
+				(result[i]['root_symbol']==result[j]['root_symbol'] and result[i]['cor_symbol']==result[j]['cor_symbol'] and 
+				result[i]['depth']!=result[j]['depth']))  and result[i] not in duplicates):
 				duplicates.append(result[j])
 
 	return [x for x in result if x not in duplicates]
@@ -146,30 +172,36 @@ def set_branches(result, branches):
 	temp=[]
 	temp2=[]
 	symbol="null"
-	result=sorted(result, key=operator.itemgetter('score'), reverse=True)
-	result=sorted(result, key=operator.itemgetter('root_symbol', 'depth')) 
-	for i in range(len(result)):
+
+	result=sorted(sorted(result, key=operator.itemgetter('score'), reverse=True), 
+		key=operator.itemgetter('root_symbol', 'depth'))
+
+
+	for i in range(branches, len(result)):
 		if symbol!=result[i]['root_symbol']:
 			symbol=result[i]['root_symbol']
 			temp[:]=[]
 			for item in result:
 				if item['root_symbol'] == symbol:
 					temp.append(item)
-			temp=temp[:branches]
+			else:
+				temp=temp[:branches]
 			temp2.extend(temp)
+
+	#result=sorted(result, key=operator.itemgetter('cor_symbol'))
+
 
 	return temp2
 
 
 #limits amount of nodes by only displaying the top n nodes, prioritizing lower levels of depth
 def set_nodes(result, nodes):
-	temp=[]
-	temp=sorted(result, key=operator.itemgetter('score'), reverse=True)
-	return sorted(temp, key=operator.itemgetter('depth'))[:nodes]
+	return sorted(sorted(result, key=operator.itemgetter('score'), reverse=True), 
+		key=operator.itemgetter('depth'))[:nodes]
 
-def save_results(result, name):
+def save_results(list, name):
 	with open(name, 'w') as outfile:
-		json.dump(result, outfile, indent=2)
+		json.dump(list, outfile, indent=2)
 
 if __name__ == '__main__':
 	Main()

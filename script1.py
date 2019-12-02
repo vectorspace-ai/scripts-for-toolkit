@@ -60,23 +60,31 @@ def Main():
 		exit()
 
 
+	result=sorted(sorted(result, key=operator.itemgetter('score'), 
+		reverse=True), key=operator.itemgetter('depth', 'root_symbol')) 
+
 	array=list(map(operator.itemgetter('root_symbol', 'cor_symbol'), result)) 
+
+
+	pprint.pprint(result)
+	print("Nodes: ", len(result))
 
 	save_results(array, "output/output.json")
 	save_results(result, "output/output_full.json")
-
-	pprint.pprint(result)
 	end=time.time()
 	print("Elapsed time: ", end-start)
 
 
 
+
+	
+
 def get_intersected(symbol, dict, depth=1):
 	return [{'root_symbol':symbol, 'cor_symbol':headers[i].strip(), 'score':score, 'depth':depth} for i, score in enumerate(dict[symbol]) if score > SCORE and headers[i].strip()!=symbol]
 
-def save_results(result, name):
+def save_results(list, name):
 	with open(name, 'w') as outfile:
-		json.dump(result, outfile, indent=2)
+		json.dump(list, outfile, indent=2)
 
 if __name__ == '__main__':
 	Main()
