@@ -21,11 +21,11 @@ import operator
 
 start=time.time()
 
-SCORE = 0.01
-if len(sys.argv) != 6:
+
+if len(sys.argv) != 7:
 	print('*****')
-	print('Usage: print script.py <symbol> <depth> <branches> <nodes> <file_name>')
-	print('Example: python script2.py BTC 3 2 5 dataset.csv')
+	print('Usage: print script.py <symbol> <depth> <branches> <nodes> <min_score><file_name>')
+	print('Example: python script2.py BTC 3 2 5 0.01 dataset.csv')
 	print('Note: passing the argument for branches and nodes as 1 gives the max possible amount of nodes and branches')
 	print('Passing all numerical arguments as 0 makes the script behave the same as script1.py')
 	print('*****')
@@ -41,8 +41,11 @@ root_symbol = sys.argv[1]
 max_depth = int(sys.argv[2])
 branches = int(sys.argv[3])
 nodes = int(sys.argv[4])
-file_name = sys.argv[5]
+min_score = float(sys.argv[5])
+file_name = sys.argv[6]
 
+if min_score==0:
+	min_score=0.0001
 
 #Read the dataset
 headers = []
@@ -87,8 +90,11 @@ def Main():
 	if nodes>0:
 		result = set_nodes(result, nodes)
 
-	with open('output_script2.json', 'w') as outfile:
-		json.dump(result, outfile, indent=2)
+	array=list(map(operator.itemgetter('root_symbol', 'cor_symbol'), result)) 
+
+	save_results(array, "output/output.json")
+	save_results(result, "output/output_full.json")
+
 
 	pprint.pprint(result)
 	end=time.time()
@@ -98,7 +104,7 @@ def Main():
 
 #this function gets all the correlated symbols of the root symbol
 def get_intersected(symbol, dict, depth=1):
-	return [{'root_symbol':symbol, 'cor_symbol':headers[i].strip(), 'score':score, 'depth':depth} for i, score in enumerate(dict[symbol]) if score > SCORE and headers[i].strip()!=symbol]
+	return [{'root_symbol':symbol, 'cor_symbol':headers[i].strip(), 'score':score, 'depth':depth} for i, score in enumerate(dict[symbol]) if score > min_score and headers[i].strip()!=symbol]
 
 
 def set_depth(result, max_depth):
@@ -160,6 +166,10 @@ def set_nodes(result, nodes):
 	temp=[]
 	temp=sorted(result, key=operator.itemgetter('score'), reverse=True)
 	return sorted(temp, key=operator.itemgetter('depth'))[:nodes]
+
+def save_results(result, name):
+	with open(name, 'w') as outfile:
+		json.dump(result, outfile, indent=2)
 
 if __name__ == '__main__':
 	Main()

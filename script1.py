@@ -16,7 +16,7 @@ import operator
 start=time.time()
 
 
-SCORE = 0.01
+SCORE = 0.0001
 
 if len(sys.argv) != 3:
 	print('*****')
@@ -60,9 +60,10 @@ def Main():
 		exit()
 
 
+	array=list(map(operator.itemgetter('root_symbol', 'cor_symbol'), result)) 
 
-	with open('output_script1.json', 'w') as outfile:
-		json.dump(result, outfile, indent=2)
+	save_results(array, "output/output.json")
+	save_results(result, "output/output_full.json")
 
 	pprint.pprint(result)
 	end=time.time()
@@ -73,6 +74,9 @@ def Main():
 def get_intersected(symbol, dict, depth=1):
 	return [{'root_symbol':symbol, 'cor_symbol':headers[i].strip(), 'score':score, 'depth':depth} for i, score in enumerate(dict[symbol]) if score > SCORE and headers[i].strip()!=symbol]
 
+def save_results(result, name):
+	with open(name, 'w') as outfile:
+		json.dump(result, outfile, indent=2)
 
 if __name__ == '__main__':
 	Main()
