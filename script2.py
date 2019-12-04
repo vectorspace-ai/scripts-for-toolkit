@@ -110,8 +110,8 @@ def Main():
 	print("Threshold: ", min_score)
 
 
-	save_results(array, "/home/magnus/VectorSpace/webpage/GUI/templates/output/output.json")
-	save_results(result, "/home/magnus/VectorSpace/webpage/GUI/templates/output/output_full.json")
+	save_results(array, "output/output.json")
+	save_results(result, "output/output_full.json")
 	end=time.time()
 	print("Elapsed time: ", end-start)
 
