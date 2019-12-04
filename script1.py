@@ -74,11 +74,6 @@ def Main():
 	end=time.time()
 	print("Elapsed time: ", end-start)
 
-
-
-
-	
-
 def get_intersected(symbol, dict, depth=1):
 	return [{'root_symbol':symbol, 'cor_symbol':headers[i].strip(), 'score':score, 'depth':depth} for i, score in enumerate(dict[symbol]) if score > SCORE and headers[i].strip()!=symbol]
 

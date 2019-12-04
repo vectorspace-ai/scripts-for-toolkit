@@ -96,8 +96,17 @@ def Main():
 
 	pprint.pprint(result)
 	print("Nodes: ", len(result))
-	print("Max Depth: ", max_depth)
-	print("Max Branches: ", branches)
+	if max_depth>0:
+		print("Max Depth: ", result[-1]['depth'])
+	if branches>0:
+		print("Max Branches: ", branches)
+	print("Threshold: ", min_score)
+	if result[-1]['depth']<max_depth:
+		print("Computed depth is less than specified. Try a higher node or branch count")
+	if len(result)<nodes:
+		print("Computed amount of nodes are less than specified. Try a higher depth or branch count")
+
+
 
 	save_results(array, "output/output.json")
 	save_results(result, "output/output_full.json")
@@ -123,7 +132,7 @@ def set_depth(result, root_symbol, max_depth, branches):
 	symbols=[]
 	covered_symbols=[]
 	temp=[]
-	symbols.append(root_symbol)
+	covered_symbols.append(root_symbol)
 	#this is used for the while loop(subtracted by 1 because first level has already been covered above)
 	remainer_depth=max_depth-1
 	while remainer_depth>0:
@@ -147,12 +156,11 @@ def set_depth(result, root_symbol, max_depth, branches):
 		covered_symbols.extend(symbols)
 		temp=remove_duplicates(temp)
 		if branches>0:
-			temp=set_branches(temp, branches)
-
+			temp=set_branches(temp, branches, covered_symbols)
 
 		result.extend(temp)
 
-
+	print(covered_symbols)
 	return result
 
 #removes duplicates because a correlation matrix is mirrored right? Please contribute if there's a better way of doing this
@@ -168,27 +176,29 @@ def remove_duplicates(result):
 
 	return [x for x in result if x not in duplicates]
 #limits the amount of branches per depth. May need to work more on this one
-def set_branches(result, branches):
+def set_branches(result, branches, covered_symbols):
 	temp=[]
 	temp2=[]
 	symbol="null"
+	cor_symbol_lst=[]
 
 	result=sorted(sorted(result, key=operator.itemgetter('score'), reverse=True), 
 		key=operator.itemgetter('root_symbol', 'depth'))
-
-
 	for i in range(branches, len(result)):
 		if symbol!=result[i]['root_symbol']:
 			symbol=result[i]['root_symbol']
 			temp[:]=[]
+			count=0
 			for item in result:
-				if item['root_symbol'] == symbol:
-					temp.append(item)
-			else:
-				temp=temp[:branches]
+				if ((item['root_symbol'] == symbol or item['cor_symbol'] == symbol) and
+					item['cor_symbol'] not in covered_symbols and count<branches):
+					if item['cor_symbol'] not in cor_symbol_lst:
+						cor_symbol_lst.append(item['cor_symbol'])
+						temp.append(item)
+						count+=1
+
 			temp2.extend(temp)
 
-	#result=sorted(result, key=operator.itemgetter('cor_symbol'))
 
 
 	return temp2
