@@ -26,7 +26,7 @@ if len(sys.argv) != 7:
 	print('*****')
 	print('Usage: print script.py <symbol> <depth> <branches> <nodes> <min_score><file_name>')
 	print('Example: python script2.py BTC 3 2 5 0.01 dataset.csv')
-	print('Note: passing the argument for branches and nodes as 1 gives the max possible amount of nodes and branches')
+	print('Note: passing the argument for branches and nodes as 0 gives the max possible amount of nodes and branches')
 	print('Passing all numerical arguments as 0 makes the script behave the same as script1.py')
 	print('*****')
 	exit()
@@ -44,7 +44,7 @@ nodes = int(sys.argv[4])
 min_score = float(sys.argv[5])
 file_name = sys.argv[6]
 
-if min_score==0:
+if min_score<=0:
 	min_score=0.0001
 
 #Read the dataset
@@ -92,24 +92,26 @@ def Main():
 		reverse=True), key=operator.itemgetter('depth', 'root_symbol')) 
 
 	array=list(map(operator.itemgetter('root_symbol', 'cor_symbol'), result)) 
-
-
-	pprint.pprint(result)
+	if len(result)>0:
+		pprint.pprint(result)
+	try:
+		if result[-1]['depth']<max_depth:
+			print("Computed depth is less than specified. Try a higher node or branch count")
+	except IndexError:
+		print("Graph is empty! Try a lower threshold")
+		exit()
+	if len(result)<nodes:
+		print("Computed amount of nodes are less than specified. Try a higher depth or branch count")
 	print("Nodes: ", len(result))
 	if max_depth>0:
 		print("Max Depth: ", result[-1]['depth'])
 	if branches>0:
 		print("Max Branches: ", branches)
 	print("Threshold: ", min_score)
-	if result[-1]['depth']<max_depth:
-		print("Computed depth is less than specified. Try a higher node or branch count")
-	if len(result)<nodes:
-		print("Computed amount of nodes are less than specified. Try a higher depth or branch count")
 
 
-
-	save_results(array, "output/output.json")
-	save_results(result, "output/output_full.json")
+	save_results(array, "/home/magnus/VectorSpace/webpage/GUI/templates/output/output.json")
+	save_results(result, "/home/magnus/VectorSpace/webpage/GUI/templates/output/output_full.json")
 	end=time.time()
 	print("Elapsed time: ", end-start)
 
@@ -160,7 +162,6 @@ def set_depth(result, root_symbol, max_depth, branches):
 
 		result.extend(temp)
 
-	print(covered_symbols)
 	return result
 
 #removes duplicates because a correlation matrix is mirrored right? Please contribute if there's a better way of doing this
@@ -184,7 +185,7 @@ def set_branches(result, branches, covered_symbols):
 
 	result=sorted(sorted(result, key=operator.itemgetter('score'), reverse=True), 
 		key=operator.itemgetter('root_symbol', 'depth'))
-	for i in range(branches, len(result)):
+	for i in range(len(result)):
 		if symbol!=result[i]['root_symbol']:
 			symbol=result[i]['root_symbol']
 			temp[:]=[]
@@ -199,10 +200,7 @@ def set_branches(result, branches, covered_symbols):
 
 			temp2.extend(temp)
 
-
-
 	return temp2
-
 
 #limits amount of nodes by only displaying the top n nodes, prioritizing lower levels of depth
 def set_nodes(result, nodes):
